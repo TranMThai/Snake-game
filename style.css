@@ -1,0 +1,28 @@
+.container{
+    width: 500px;
+    margin: 50px auto;
+}
+
+h2{
+    font-family: sans-serif;
+    text-align: center;
+    font-size: 30px;
+}
+
+#gameScreen{
+    width: 100%;
+    aspect-ratio: 1/1;
+    display: flex;
+    flex-wrap: wrap;
+}
+.box{
+    width: 25px;
+    aspect-ratio: 1/1;
+    background-color: greenyellow;
+}
+.box.active{
+    background-color: darkgreen;
+}
+.box.food{
+    background-color: red;
+}
