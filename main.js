@@ -7,11 +7,7 @@ for (let i in arr) {
 //Snake property
 let snake = [
     {
-        x: 6,
-        y: 9
-    },
-    {
-        x: 7,
+        x: 9,
         y: 9
     },
     {
@@ -19,10 +15,19 @@ let snake = [
         y: 9
     },
     {
-        x: 9,
+        x: 7,
         y: 9
     }
 ]
+
+//Food property
+let food = {
+    x: Math.floor(Math.random() * 20),
+    y: Math.floor(Math.random() * 20)
+}
+
+let emptyPlace = [{}]
+updateArr()
 
 //contructor snake
 function addSnake(x, y) {
@@ -30,7 +35,7 @@ function addSnake(x, y) {
     this.y = y
 }
 
-arr[snake[snake.length - 1].y][snake[snake.length - 1].x] = 'body';
+arr[snake[0].y][snake[0].x] = 'body';
 
 let snakeMove = 'right'
 
@@ -55,28 +60,34 @@ function move() {
 
     updateSnake()
 
-    if (snakeMove == 'right') {
-        snake[snake.length - 1].x++
+    switch (snakeMove) {
+        case 'right': {
+            snake[0].x++
+            break
+        }
+        case 'left': {
+            snake[0].x--
+            break
+        }
+        case 'up': {
+            snake[0].y--
+            break
+        }
+        case 'down': {
+            snake[0].y++
+            break
+        }
     }
-    else if (snakeMove == 'left') {
-        snake[snake.length - 1].x--
-    }
-    else if (snakeMove == 'up') {
-        snake[snake.length - 1].y--
-    }
-    else if (snakeMove == 'down') {
-        snake[snake.length - 1].y++
-    }
-    
+
     // If the snake hit the wall 
-    if (snake[snake.length - 1].x >= 20 || snake[snake.length - 1].x < 0 ||
-        snake[snake.length - 1].y >= 20 || snake[snake.length - 1].y < 0) {
+    if (snake[0].x >= 20 || snake[0].x < 0 ||
+        snake[0].y >= 20 || snake[0].y < 0) {
         gameOver()
         return false
     }
 
     // If the snake has eaten itself
-    if (snake.find((s, i) => { return i < snake.length-1 && s.x == snake[snake.length-1].x && s.y == snake[snake.length-1].y })) {
+    if (snake.find((s, i) => { return i > 0 && s.x == snake[0].x && s.y == snake[0].y })) {
         gameOver()
         return false
     }
@@ -88,37 +99,38 @@ function move() {
 
 //Update snake X Y
 function updateSnake() {
-    for (let i = 0; i < snake.length; i++) {
-        if (i + 1 < snake.length) {
-            snake[i] = { ...snake[i + 1] }
-        }
+    for (let i = snake.length - 1; i > 0; i--) {
+        snake[i] = { ...snake[i - 1] }
     }
 }
 
 //Update arr
 function updateArr() {
+    for(let i in arr){
+        arr[i].fill('')
+    }
+
+    arr[food.y][food.x] = 'food'
+
+    for (s of snake) {
+        arr[s.y][s.x] = 'body'
+    }
+
+    emptyPlace = []
     for (let y in arr) {
         for (let x in arr[y]) {
-            for (let s of snake) {
-                if (y == s.y && x == s.x) {
-                    arr[y][x] = 'body'
-                    break
-                }
-                else if (y == foodY && x == foodX) {
-                    arr[y][x] = 'food'
-                }
-                else {
-                    arr[y][x] = ''
-                }
+            if (arr[y][x] != 'body') {
+                emptyPlace.push({ x: x, y: y })
             }
         }
     }
+
 }
 
 // If the snake has eaten food
 function ateFood() {
-    if (snake[snake.length - 1].x == foodX && snake[snake.length - 1].y == foodY) {
-        snake.unshift(new addSnake(snake[0].x, snake[0].y))
+    if (snake[0].x == food.x && snake[0].y == food.y) {
+        snake.push(new addSnake(snake[snake.length - 1].x, snake[snake.length - 1].y))
         return true
     }
     return false
@@ -126,11 +138,21 @@ function ateFood() {
 
 // Food respawn
 function foodRespawn() {
-    foodX = Math.floor(Math.random() * 20);
-    foodY = Math.floor(Math.random() * 20);
+    if (emptyPlace.length === 0) {
+        alert("win")
+        return
+    }
+    else {
+        let randomIndex = Math.floor(Math.random() * emptyPlace.length)
+        let randomPlace = emptyPlace[randomIndex]
 
-    arr[foodY][foodX] = 'food';
+        food = {
+            x: randomPlace.x,
+            y: randomPlace.y
+        }
+    }
 }
+
 // Refresh the game screen every 200 milliseconds
 function refreshGameScreen() {
     let html = ``
@@ -163,6 +185,6 @@ window.addEventListener('keypress', function (event) {
 
 //game over
 function gameOver() {
-    alert("game over")
     clearInterval(refresh)
+    alert("game over")
 }
