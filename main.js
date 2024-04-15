@@ -1,33 +1,36 @@
-//Array 20x20
-let arr = new Array(20).fill('');
-for (let i in arr) {
-    arr[i] = new Array(20).fill('');
+const boardSize = 20
+let gameBoard = new Array(boardSize).fill('');
+for (let i in gameBoard) {
+    gameBoard[i] = new Array(boardSize).fill('');
 }
+
+const widthGameScreen = document.querySelector("#gameScreen").clientWidth
+const boxSize = widthGameScreen/boardSize
 
 //Snake property
 let snake = [
     {
-        x: 9,
-        y: 9
+        x: boardSize/2,
+        y: boardSize/2
     },
     {
-        x: 8,
-        y: 9
+        x: boardSize/2-1,
+        y: boardSize/2
     },
     {
-        x: 7,
-        y: 9
+        x: boardSize/2-2,
+        y: boardSize/2
     }
 ]
 
 //Food property
 let food = {
-    x: Math.floor(Math.random() * 20),
-    y: Math.floor(Math.random() * 20)
+    x: Math.floor(Math.random() * boardSize),
+    y: Math.floor(Math.random() * boardSize)
 }
 
 let emptyPlace = [{}]
-updateArr()
+updategameBoard()
 
 //contructor snake
 function addSnake(x, y) {
@@ -35,7 +38,7 @@ function addSnake(x, y) {
     this.y = y
 }
 
-arr[snake[0].y][snake[0].x] = 'body';
+gameBoard[snake[0].y][snake[0].x] = 'body';
 
 let snakeMove = 'right'
 
@@ -80,8 +83,8 @@ function move() {
     }
 
     // If the snake hit the wall 
-    if (snake[0].x >= 20 || snake[0].x < 0 ||
-        snake[0].y >= 20 || snake[0].y < 0) {
+    if (snake[0].x >= boardSize || snake[0].x < 0 ||
+        snake[0].y >= boardSize || snake[0].y < 0) {
         gameOver()
         return false
     }
@@ -92,7 +95,7 @@ function move() {
         return false
     }
 
-    updateArr()
+    updategameBoard()
 
     return true
 }
@@ -104,22 +107,22 @@ function updateSnake() {
     }
 }
 
-//Update arr
-function updateArr() {
-    for(let i in arr){
-        arr[i].fill('')
+//Update gameBoard
+function updategameBoard() {
+    for(let i in gameBoard){
+        gameBoard[i].fill('')
     }
 
-    arr[food.y][food.x] = 'food'
+    gameBoard[food.y][food.x] = 'food'
 
     for (s of snake) {
-        arr[s.y][s.x] = 'body'
+        gameBoard[s.y][s.x] = 'body'
     }
 
     emptyPlace = []
-    for (let y in arr) {
-        for (let x in arr[y]) {
-            if (arr[y][x] != 'body') {
+    for (let y in gameBoard) {
+        for (let x in gameBoard[y]) {
+            if (gameBoard[y][x] != 'body') {
                 emptyPlace.push({ x: x, y: y })
             }
         }
@@ -153,13 +156,13 @@ function foodRespawn() {
     }
 }
 
-// Refresh the game screen every 200 milliseconds
+// Refresh the game screen every boardSize0 milliseconds
 function refreshGameScreen() {
     let html = ``
-    for (let i in arr) {
-        for (let j in arr) {
-            let box = arr[i][j];
-            html += `<span class="box ${box}"></span>`
+    for (let i in gameBoard) {
+        for (let j in gameBoard) {
+            let box = gameBoard[i][j];
+            html += `<span class="box ${box}" style="width: ${boxSize}px;"></span>`
         }
     }
 

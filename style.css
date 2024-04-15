@@ -16,7 +16,6 @@ h2{
     flex-wrap: wrap;
 }
 .box{
-    width: 25px;
     aspect-ratio: 1/1;
     background-color: greenyellow;
 }
